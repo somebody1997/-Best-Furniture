@@ -1,0 +1,130 @@
+<template>
+  <div
+    class="product-content cursor-pointer"
+    @click="$router.push(`/product/${products.id}`)"
+  >
+    <div class="mb-3">
+      <div
+        class="
+          product-img
+          position-relative
+          d-flex-center
+          rounded rounded-3
+          bg-light
+          w-100
+          pt-4
+          pb-3
+        "
+      >
+        <div class="img d-flex-center">
+          <img
+             :src="product.imageUrl"
+            class="img-transparent"
+            :alt="products.title"
+          />
+        </div>
+        <div class="more position-absolute top-0"></div>
+        <p class="more-text position-absolute text-white fw-bold fs-5">
+          查看更多
+        </p>
+      </div>
+    </div>
+    <h5 class="card-title text-center fw-bold mb-0 mb-2">
+      {{ products.title }}
+    </h5>
+    <div class="d-flex justify-content-center">
+      <small
+        class="card-text text-decoration-line-through text-gray mt-1 me-2"
+        v-if="products.origin_price !== products.price"
+      >
+        原價:NT${{ products.origin_price }}
+      </small>
+      <p
+        class="mb-0"
+        :class="[
+          products.origin_price !== products.price
+            ? 'text-danger'
+            : 'text-dark',
+        ]"
+      >
+        {{ products.origin_price !== products.price ? "促銷價:NT$" : "售價:NT$"
+        }}{{ products.price }}
+      </p>
+    </div>
+  </div>
+  <a
+    href="#"
+    class="position-absolute top-0 end-0 mt-1 me-2"
+    @click.prevent="favorites(products.id)"
+  >
+    <i
+      class="bi fs-3"
+      :class="[
+        products.heart
+          ? ['text-primary', 'bi-heart-fill']
+          : ['text-gray', 'bi-heart'],
+      ]"
+    ></i
+    ><!--收藏-->
+  </a>
+</template>
+
+<script>
+export default {
+  data() {
+    return {
+      products: this.item,
+      PageFavorites: false,
+    };
+  },
+  props: {
+    item: {
+      typeof: Object,
+      require: true,
+    },
+  },
+  emits: {
+    favorites: (id) => typeof id === 'string',
+  },
+  methods: {
+    favorites(id) {
+      if (this.$route.path.indexOf('/favorites') === 0) {
+        this.$emit('favorites', id);
+        this.PageFavorites = true;
+      }
+      this.$store.dispatch('updateheart'.this.products.id);
+    },
+  },
+};
+</script>
+
+<style scoped lang="scss">
+.product-content {
+  &:hover {
+    img {
+      transition: 0.5s;
+      filter: grayscale(50%);
+      transform: scale(1.2, 1.2);
+    }
+    .product-img {
+      background-color: white !important;
+    }
+    .more {
+      background-color: rgba(0, 0, 0, 0.4) !important;
+      border-radius: 0.3rem;
+      width: 100%;
+      height: 100%;
+    }
+    .more-text {
+      display: block;
+    }
+  }
+  .img {
+    width: 180px;
+    height: 140px;
+  }
+  .more-text {
+    display: none;
+  }
+}
+</style>
